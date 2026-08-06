@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — RoamGuard</title>
+<meta name="description" content="RoamGuard collects no personal data. No account, no server, no analytics, no tracking. Everything stays on your device.">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <img src="assets/icon.png" alt="">
+    <strong>RoamGuard</strong>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+<article>
+
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: 6 August 2026</p>
+
+<h2>Summary</h2>
+<p>RoamGuard collects no personal data. There is no account, no server, no analytics and no third-party SDK. Everything the app measures stays on your device.</p>
+
+<h2>What the app stores, and where</h2>
+<p>All of the following is stored <strong>only on your device</strong>, in the app's own container and its app group (shared with the RoamGuard widget and Apple Watch app):</p>
+<ul>
+  <li>Your plan settings: billing day, allowances, alert thresholds, units, theme.</li>
+  <li>Daily totals of mobile and Wi-Fi data measured on this device.</li>
+  <li>Any figures you enter when calibrating against your carrier's number.</li>
+  <li>A record of which alerts have already been delivered, so they are not repeated.</li>
+</ul>
+<p>None of this is transmitted anywhere. RoamGuard makes no network requests of its own for any purpose, including updates, crash reporting or diagnostics.</p>
+
+<h2>What the app does not do</h2>
+<ul>
+  <li>It does not collect, transmit or sell any data.</li>
+  <li>It does not use analytics, telemetry, advertising or attribution SDKs.</li>
+  <li>It does not track you across apps or websites.</li>
+  <li>It does not request or use your location.</li>
+  <li>It does not read the contents of your network traffic. It reads only the operating system's byte <em>counters</em> — how much data an interface has carried, never what that data was.</li>
+  <li>It does not require or offer an account.</li>
+</ul>
+
+<h2>System APIs used</h2>
+<p>RoamGuard's privacy manifest declares every required-reason API it accesses:</p>
+<table>
+  <thead><tr><th>API</th><th>Reason</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>System boot time</td><td><code>35F9.1</code></td><td>The kernel's byte counters reset when the device restarts. Detecting a reboot prevents the app from misreading that reset as several gigabytes of traffic.</td></tr>
+    <tr><td>User defaults</td><td><code>CA92.1</code></td><td>Stores your settings and shares them with the RoamGuard widget and Watch app through the app group.</td></tr>
+    <tr><td>Disk space</td><td><code>E174.1</code></td><td>Checked when you export a CSV or PDF, so the export fails cleanly rather than producing a truncated file.</td></tr>
+  </tbody>
+</table>
+
+<h2>Permissions</h2>
+<p>RoamGuard requests exactly one permission: <strong>notifications</strong>, so it can warn you before you exceed your allowance. Declining it leaves the rest of the app fully functional; you simply will not receive alerts.</p>
+
+<h2>Data you export</h2>
+<p>CSV and PDF exports are created at your request and handed to the iOS share sheet. Where they go from there is entirely your choice. RoamGuard does not upload them.</p>
+
+<h2>iCloud</h2>
+<p>iCloud sync is <strong>off by default</strong> and entirely optional. If you turn it on, your usage history is stored in your own private iCloud database, which only you can access — the developer cannot see it. Turning it off returns the app to device-only storage. If you enable an encrypted device backup, that backup is governed by Apple's terms, not by RoamGuard.</p>
+
+<h2>Children</h2>
+<p>RoamGuard does not collect data from anyone, including children under 13.</p>
+
+<h2>Changes</h2>
+<p>If this policy ever changes, the updated version will be published on this page and the date above will change.</p>
+
+<h2>Contact</h2>
+<p>Questions about privacy: <a href="mailto:hugomoriceau@icloud.com">hugomoriceau@icloud.com</a></p>
+
+</article>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>© 2026 Hugo Moriceau ·
+      <a href="index.html">Home</a> ·
+      <a href="terms.html">Terms</a> ·
+      <a href="support.html">Support</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
