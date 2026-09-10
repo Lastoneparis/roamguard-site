@@ -2,71 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Support — RoamGuard</title>
-<meta name="description" content="Help and frequently asked questions for RoamGuard, including how it measures data and why your carrier's figure may differ.">
-<link rel="icon" href="assets/icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RoamGuard — Support</title>
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-
-<header class="site">
-  <div class="wrap">
-    <img src="assets/icon.png" alt="">
-    <strong>RoamGuard</strong>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-    </nav>
-  </div>
+<div class="strip"><div class="wrap"><span><b>Support</b></span><span>contact@oshi-messenger.com</span></div></div>
+<div class="wrap">
+<header class="hero">
+  <h1>RoamGuard support</h1>
+  <p class="lede">Most questions about RoamGuard are really questions about what iOS lets a data-usage app see. Those are answered first.</p>
 </header>
 
-<main class="wrap">
-<article>
+<section>
+  <h2>Write to us</h2>
+  <p><b>contact@oshi-messenger.com</b></p>
+  <p class="dim">Include your iPhone model, your iOS version, whether you use one SIM or two, and the two numbers that disagree &mdash; RoamGuard's and your carrier's. That is almost always enough.</p>
+</section>
 
-<h1>Support</h1>
-<p>Email <a href="mailto:hugomoriceau@icloud.com">hugomoriceau@icloud.com</a> and you will get a reply. Please include your iOS version and what you were doing at the time.</p>
+<section>
+  <h2>The numbers disagree</h2>
+  <p class="dim">This is the most common report, and it is usually not a bug. RoamGuard counts from the moment it was installed; your carrier counts from the start of your billing cycle. If you installed mid-cycle, RoamGuard is missing everything before that.</p>
+  <p class="dim">The fix is one step: open RoamGuard, tap the pool that is wrong, and enter your carrier's current figure. RoamGuard realigns to it and carries on from there. Do this once after installing and once at the start of each cycle if you want it tight.</p>
+</section>
 
-<h2>Why does my carrier's number differ from RoamGuard's?</h2>
-<p>iOS gives apps no way to read your plan's usage. RoamGuard measures the traffic this iPhone carries, starting from the moment you installed it — so if you installed it partway through a billing cycle, everything before that is not counted. Carriers may also zero-rate certain traffic or round differently.</p>
-<p>Open <strong>Settings → Match my carrier's figure</strong>, enter the number your carrier shows, and RoamGuard realigns its total and continues from there. Doing this once per cycle keeps the two in step.</p>
+<section>
+  <h2>Troubleshooting</h2>
+  <dl class="q">
+    <dt>An alert did not arrive</dt>
+    <dd>iOS Settings &rarr; Notifications &rarr; RoamGuard: allow notifications, with sounds. For the 100% alert to break through a Focus, Time Sensitive must be permitted.</dd>
+    <dt>The widget shows an old figure</dt>
+    <dd>iOS decides how often a widget refreshes. Opening the app updates it immediately.</dd>
+    <dt>The cycle reset on the wrong day</dt>
+    <dd>Set your cycle start date in RoamGuard's settings &mdash; it defaults to the 1st, which is not every carrier's billing day.</dd>
+    <dt>My second line is not tracked</dt>
+    <dd>Both lines must be active in iOS Settings &rarr; Cellular. RoamGuard shows a pool per line that iOS reports as enabled.</dd>
+    <dt>Restoring a purchase</dt>
+    <dd>Settings &rarr; Restore Purchases, on the Apple Account that bought it.</dd>
+  </dl>
+</section>
 
-<h2>Why do I have to tell it when I am roaming?</h2>
-<p>Because iOS does not expose roaming status to apps at all. There is no public API for it — <code>CTCarrier</code>, the only thing that ever reported the serving network's country, was deprecated in iOS 16 and now returns placeholder values.</p>
-<p>So RoamGuard treats your own switch as the truth. In <strong>Settings → Roaming</strong> you can set Home or Roaming explicitly, or leave it on Automatic, which infers roaming from your device's region. The app always tells you which of the two produced the answer, so a guess is never presented as a fact.</p>
-
-<h2>Does it count my Personal Hotspot?</h2>
-<p>Yes. Data used by devices tethered to your iPhone is counted, because your iPhone genuinely carries it — and your carrier bills it.</p>
-
-<h2>Will it drain my battery?</h2>
-<p>No. RoamGuard has no timers and never polls. It reads the counter when you open the app, when the network changes, and when iOS grants a background refresh. Because the counter is cumulative, a missed refresh loses nothing.</p>
-
-<h2>The numbers stopped updating</h2>
-<p>iOS decides when apps may run in the background, and it may stop granting refreshes to an app you rarely open. Opening RoamGuard always takes a fresh reading and catches up on everything since the last one.</p>
-
-<h2>Do my alerts reset each month?</h2>
-<p>Yes. Alerts are scoped to the billing cycle, so an 80% alert that fired last month fires again in the next one.</p>
-
-<h2>Can I keep my history if I change iPhone?</h2>
-<p>Turn on <strong>Settings → Sync history with iCloud</strong>. History is kept per device, so an iPhone and an iPad on one account are never added together.</p>
-
-<h2>How do I export my data?</h2>
-<p>On the History tab, tap the share button and choose CSV or PDF.</p>
-
-</article>
-</main>
-
-<footer class="site">
-  <div class="wrap">
-    <p>© 2026 Hugo Moriceau ·
-      <a href="index.html">Home</a> ·
-      <a href="privacy.html">Privacy</a> ·
-      <a href="terms.html">Terms</a>
-    </p>
-  </div>
-</footer>
-
+<section>
+  <h2>Privacy, briefly</h2>
+  <p class="dim">RoamGuard has no account, no analytics, no third-party SDKs and no location permission, and it makes no network requests of its own. Deleting the app deletes everything it held. The full text is in the <a href="privacy.html">privacy policy</a>.</p>
+</section>
+</div>
+<footer><div class="wrap">
+  <a href="index.html">Home</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a><br><br>
+  &copy; 2026 Oshi Lab &middot; contact@oshi-messenger.com
+</div></footer>
 </body>
 </html>
