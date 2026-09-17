@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alerts reference — RoamGuard</title>
+<meta name="description" content="Every alert RoamGuard can send: the thresholds, the exact wording, which one is allowed through Focus, how to change them, and what happens when notifications are off.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="strip" aria-label="RoamGuard">
+<div class="strip-inner">
+  <a class="id" href="index.html"><span class="led" aria-hidden="true"></span>RoamGuard</a>
+  <a href="index.html">Overview</a>
+  <a href="how-counting-works.html">Counting</a>
+  <a href="alerts.html" aria-current="page">Alerts</a>
+  <a href="faq.html">FAQ</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="support.html">Support</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+  <span class="spacer"></span>
+  <span class="cell meta">Reference</span>
+</div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <h1>Alerts reference</h1>
+  <p class="lede">Every notification RoamGuard is capable of sending is listed here, with what triggers it, what it says, how often it can repeat, and whether it is allowed to interrupt a Focus. All of them are local. Nothing is sent to a server, because there is no server.</p>
+</header>
+
+<section aria-labelledby="thresholds">
+  <h2 id="thresholds">Cycle threshold alerts</h2>
+  <p>A threshold alert fires the first time your usage crosses that share of the allowance for a pool, in that billing cycle. The thresholds you can switch on are fixed; which of them are on is entirely yours.</p>
+
+  <div class="meter">
+    <div class="meter-head">
+      <span class="meter-label">Threshold ladder</span>
+      <span class="meter-value">50 / 70 / 80 / 90 / 95 / 98 / 100%</span>
+    </div>
+    <div class="track"><i class="fill warn" style="width:80%"></i></div>
+    <div class="scale"><span>0</span><span>50%</span><span>100%</span></div>
+    <p class="meter-caption">On a fresh install <b>50, 80, 90, 95 and 100%</b> are on. 70 and 98 are available and off.</p>
+  </div>
+
+  <div class="tw">
+  <table>
+    <caption>Threshold alert wording</caption>
+    <thead><tr><th>Crossing</th><th>Title</th><th>Body</th><th class="n">Through Focus</th></tr></thead>
+    <tbody>
+      <tr><td>50%</td><td>50% of your Home data used</td><td>10.0 GB left in this cycle.</td><td class="n no">No</td></tr>
+      <tr><td>70%</td><td>70% of your Home data used</td><td>6.0 GB left in this cycle.</td><td class="n no">No</td></tr>
+      <tr><td>80%</td><td>80% of your Roaming data used</td><td>1.0 GB left in this cycle.</td><td class="n no">No</td></tr>
+      <tr><td>90%</td><td>90% of your Roaming data used</td><td>0.5 GB left in this cycle.</td><td class="n no">No</td></tr>
+      <tr><td>95%</td><td>95% of your Roaming data used</td><td>0.25 GB left in this cycle.</td><td class="n no">No</td></tr>
+      <tr><td>98%</td><td>98% of your Roaming data used</td><td>0.1 GB left in this cycle.</td><td class="n no">No</td></tr>
+      <tr><td>100%</td><td>Limit reached</td><td>You have used all of your Roaming allowance &mdash; 5.2 GB so far this cycle.</td><td class="n yes">Yes</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small dim">The figures above are examples on a 20&nbsp;GB home allowance and a 5&nbsp;GB roaming allowance; the wording is the app's. The pool name in the title is &ldquo;Home&rdquo; or &ldquo;Roaming&rdquo;, because the two pools alert independently.</p>
+  <p>A pool set to <b>unlimited</b> has no threshold to cross, so it sends no threshold alerts at all.</p>
+</section>
+
+<section aria-labelledby="budget">
+  <h2 id="budget">Daily budget alerts</h2>
+  <p>A daily budget is a ceiling you set for yourself for a single day. It is optional and off unless you switch it on during setup, where a slider covers 0.1 to 10&nbsp;GB in 0.1&nbsp;GB steps. The setup screen also shows what your allowance works out to per day if you spread it evenly over the cycle, so you have something to aim at.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Crossing</th><th>Title</th><th>Body</th><th class="n">Through Focus</th></tr></thead>
+    <tbody>
+      <tr><td>50% of budget</td><td>50% of today's budget used</td><td>0.5 GB used today.</td><td class="n no">No</td></tr>
+      <tr><td>75% of budget</td><td>75% of today's budget used</td><td>0.75 GB used today.</td><td class="n no">No</td></tr>
+      <tr><td>100% of budget</td><td>Daily budget passed</td><td>You have used 1.1 GB today, more than you planned.</td><td class="n no">No</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Budget alerts are scoped to the day, so crossing 50% today does not stop the 50% alert firing tomorrow.</p>
+</section>
+
+<section aria-labelledby="forecast">
+  <h2 id="forecast">Forecast alert</h2>
+  <p>This is the one that arrives before anything has gone wrong. It fires when the projection lands past the allowance while you are still inside it &mdash; the moment where changing your behaviour is still free.</p>
+  <div class="kv">
+    <dt>Trigger</dt><dd>Projected end-of-cycle total exceeds the allowance, usage is still under 100%, and the allowance would run out before the cycle rolls over.</dd>
+    <dt>Title</dt><dd>On track to go over</dd>
+    <dt>Body</dt><dd>At your current pace you will pass your 5 GB Roaming limit in about 3 days.</dd>
+    <dt>Repeats</dt><dd>Once per pool per billing cycle.</dd>
+    <dt>Through Focus</dt><dd>No.</dd>
+  </div>
+</section>
+
+<section aria-labelledby="heavy">
+  <h2 id="heavy">Heavy day alert</h2>
+  <div class="kv">
+    <dt>Trigger</dt><dd>Today's usage reaches 1.8&times; your recent daily average for that pool.</dd>
+    <dt>Title</dt><dd>Heavy day</dd>
+    <dt>Body</dt><dd>You have used 2.4 GB today, about 3.1 times your usual. Stay under 0.4 GB a day to finish the cycle within your limit.</dd>
+    <dt>Repeats</dt><dd>Once per pool per day.</dd>
+    <dt>Through Focus</dt><dd>No.</dd>
+  </div>
+  <p class="small dim" style="margin-top:12px">It needs a recent average to compare against, so it stays quiet on a device that has only just started measuring.</p>
+</section>
+
+<section aria-labelledby="digest">
+  <h2 id="digest">Daily summary</h2>
+  <div class="kv">
+    <dt>Trigger</dt><dd>A time of day you pick, on the hour. Off by default; 20:00 when switched on.</dd>
+    <dt>Title</dt><dd>Today's data</dd>
+    <dt>Body</dt><dd>Open RoamGuard to see where you stand in this cycle.</dd>
+    <dt>Repeats</dt><dd>Daily, until switched off.</dd>
+    <dt>Through Focus</dt><dd>No.</dd>
+  </div>
+  <p class="small dim" style="margin-top:12px">The summary is scheduled by the system on a repeating calendar trigger rather than computed in advance, which is why it invites you in rather than quoting a figure that might be stale.</p>
+</section>
+
+<section aria-labelledby="focus">
+  <h2 id="focus">Focus, and why only one alert is allowed through</h2>
+  <div class="note hard">
+    <p><b>Exactly one alert is marked Time Sensitive: reaching 100% of an allowance.</b> Everything else is delivered at the ordinary <em>active</em> level and waits its turn like any other notification.</p>
+  </div>
+  <p>Going over an allowance costs real money, often per megabyte and often while abroad, so that one is worth interrupting for. A 50% alert is not. If every alert claimed to be urgent, iOS users would turn the whole app's notifications off &mdash; which would silence the one that mattered.</p>
+  <p>Time Sensitive delivery still respects your Focus configuration: iOS shows a Time Sensitive notification during a Focus only when that Focus is set to allow them. RoamGuard cannot and does not override that.</p>
+  <p>The switch is <b>Settings &rsaquo; Alerts &rsaquo; &ldquo;Alert me even during Focus&rdquo;</b>, described in the app as <em>&ldquo;Only when your allowance is fully used. Going over costs real money, so this one gets through.&rdquo;</em> Turn it off and the 100% alert becomes an ordinary notification like the rest.</p>
+  <h3>Not a Critical Alert</h3>
+  <p>RoamGuard deliberately does not use Apple's Critical Alerts, which ignore silent mode and Do Not Disturb entirely. That requires a special entitlement Apple grants only on request, and without it the behaviour quietly degrades &mdash; which would make the setting a lie. Time Sensitive is what the app actually has, so Time Sensitive is what it claims.</p>
+</section>
+
+<section aria-labelledby="dedupe">
+  <h2 id="dedupe">How often an alert can repeat</h2>
+  <p>Each alert is recorded once it has been delivered, and the record is scoped &mdash; cycle alerts carry the cycle, daily alerts carry the date.</p>
+  <div class="kv">
+    <dt>Threshold and forecast</dt><dd>At most once per pool, per billing cycle. The ladder restarts when the cycle rolls over.</dd>
+    <dt>Daily budget and heavy day</dt><dd>At most once per pool, per day.</dd>
+    <dt>Going back under</dt><dd>Dropping below a threshold and crossing it again in the same cycle does not re-fire it.</dd>
+    <dt>Several at once</dt><dd>If one reading crosses more than one threshold, each is delivered, ordered from least to most severe so the most serious one lands last.</dd>
+  </div>
+  <p class="small dim" style="margin-top:12px">Without the cycle in the record, &ldquo;80%&rdquo; would fire once in your first month and never again. The delivery record is pruned to the current cycle and the current day, so it does not grow forever.</p>
+</section>
+
+<section aria-labelledby="wifi">
+  <h2 id="wifi">Pause alerts on Wi-Fi</h2>
+  <p><b>Settings &rsaquo; Alerts &rsaquo; &ldquo;Pause alerts on Wi-Fi&rdquo;</b> suppresses alerts while Wi-Fi is the active path &mdash; you are not spending plan data, so there is nothing to act on.</p>
+  <p>One exception: an alert marked Time Sensitive still gets through. If you have genuinely exhausted an allowance, that is true whether or not you happen to be on Wi-Fi at this moment, and it costs money either way.</p>
+  <p>The setting is off by default.</p>
+</section>
+
+<section aria-labelledby="sounds">
+  <h2 id="sounds">Sounds</h2>
+  <p>Two independent choices, so the alert that costs money can be louder than the routine ones.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Setting</th><th>Applies to</th><th>Default</th></tr></thead>
+    <tbody>
+      <tr><td>Threshold alerts</td><td>Every alert except reaching 100%</td><td>Chime</td></tr>
+      <tr><td>Limit reached</td><td>Reaching 100% of an allowance</td><td>Alert</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Each can be set to <b>Standard</b> (the system notification sound), <b>Chime</b>, <b>Alert</b> or <b>Silent</b>. Chime and Alert are short audio files bundled in the app; nothing is downloaded.</p>
+  <p><b>Play a preview</b> plays the currently selected sound and then tells you what it did &mdash; which sound played, or that Silent is selected, or that notifications are off for RoamGuard. It also works while the app is open, which a notification normally would not: iOS suppresses an app's own notifications while that app is frontmost unless the app explicitly asks for them, and RoamGuard does.</p>
+  <p class="small dim">That last detail is not decorative. The preview button could not work by construction on any device, in the first submitted build, and it is fixed.</p>
+</section>
+
+<section aria-labelledby="foreground">
+  <h2 id="foreground">Alerts while the app is open</h2>
+  <p>They appear. Banner, list and sound, exactly as they would if the app were closed.</p>
+  <p>This matters more than it sounds: the moment someone worried about roaming data is most likely to cross a threshold is while they are staring at the dashboard. Without the app asking for foreground presentation, iOS would swallow that alert with no banner, no sound and no error.</p>
+  <p>Alerts are grouped into one thread per pool, so a run of Roaming alerts stacks together in Notification Centre instead of scattering.</p>
+</section>
+
+<section aria-labelledby="change">
+  <h2 id="change">Changing all of this</h2>
+  <div class="kv">
+    <dt>Thresholds</dt><dd>Settings &rsaquo; Alert thresholds. Tap to switch each of 50, 70, 80, 90, 95, 98 and 100% on or off. Turn them all off to stop threshold warnings entirely.</dd>
+    <dt>Focus behaviour</dt><dd>Settings &rsaquo; Alerts &rsaquo; Alert me even during Focus.</dd>
+    <dt>Wi-Fi pause</dt><dd>Settings &rsaquo; Alerts &rsaquo; Pause alerts on Wi-Fi.</dd>
+    <dt>Daily summary</dt><dd>Settings &rsaquo; Alerts &rsaquo; Daily summary, plus the hour.</dd>
+    <dt>Daily budget</dt><dd>Set during setup. Version 1.0 has no Settings row for it, so it cannot be changed afterwards &mdash; see <a href="support.html#known">known limitations</a>.</dd>
+    <dt>Sounds</dt><dd>Settings &rsaquo; Sounds.</dd>
+  </div>
+  <p class="small dim" style="margin-top:12px">The thresholds were originally settable only once, during onboarding, while onboarding's own footer promised they could be changed in Settings at any time. Settings now shows the same control, so the promise and the app agree.</p>
+</section>
+
+<section aria-labelledby="denied">
+  <h2 id="denied">If notifications are denied</h2>
+  <p>RoamGuard asks for notification permission once. Declining it is a supported way to use the app.</p>
+  <div class="kv">
+    <dt>What still works</dt><dd>Everything else: measurement, the dashboard, the projection, history, export, widgets, the Live Activity, the Watch app, Siri and Shortcuts.</dd>
+    <dt>What stops</dt><dd>Every alert on this page. RoamGuard has no other channel &mdash; no email, no push server, no badge-only fallback that would reach you.</dd>
+    <dt>What the app says</dt><dd>Pressing <em>Play a preview</em> reports &ldquo;Notifications are off for RoamGuard, so alert sounds cannot play,&rdquo; with a button that opens the system settings page for the app.</dd>
+    <dt>Turning them back on</dt><dd>iOS &rsaquo; Settings &rsaquo; Notifications &rsaquo; RoamGuard &rsaquo; Allow Notifications. Nothing needs to be reconfigured in the app; your thresholds were kept.</dd>
+  </div>
+  <p style="margin-top:12px">If you allow notifications but leave <em>Time Sensitive Notifications</em> off for RoamGuard, every alert including the 100% one is delivered quietly and waits behind a Focus.</p>
+</section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <nav>
+    <a href="index.html">Overview</a> <span class="sep">/</span>
+    <a href="how-counting-works.html">How counting works</a> <span class="sep">/</span>
+    <a href="faq.html">FAQ</a> <span class="sep">/</span>
+    <a href="changelog.html">Changelog</a> <span class="sep">/</span>
+    <a href="support.html">Support</a> <span class="sep">/</span>
+    <a href="privacy.html">Privacy</a> <span class="sep">/</span>
+    <a href="terms.html">Terms</a>
+  </nav>
+  <p class="legal">&copy; 2026 Oshi Lab &middot; <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+</div>
+</footer>
+
+</body>
+</html>

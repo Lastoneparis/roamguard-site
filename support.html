@@ -3,53 +3,120 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RoamGuard — Support</title>
-<link rel="stylesheet" href="assets/style.css">
+<title>Support — RoamGuard</title>
+<meta name="description" content="RoamGuard support: how to reach a human, what to include, fixes for the things that actually go wrong, and a plain list of what version 1.0 cannot do.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="panel.css">
 </head>
 <body>
-<div class="strip"><div class="wrap"><span><b>Support</b></span><span>contact@oshi-messenger.com</span></div></div>
-<div class="wrap">
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="strip" aria-label="RoamGuard">
+<div class="strip-inner">
+  <a class="id" href="index.html"><span class="led" aria-hidden="true"></span>RoamGuard</a>
+  <a href="index.html">Overview</a>
+  <a href="how-counting-works.html">Counting</a>
+  <a href="alerts.html">Alerts</a>
+  <a href="faq.html">FAQ</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="support.html" aria-current="page">Support</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+  <span class="spacer"></span>
+  <span class="cell meta">Support</span>
+</div>
+</nav>
+
+<main id="main">
+
 <header class="hero">
-  <h1>RoamGuard support</h1>
-  <p class="lede">Most questions about RoamGuard are really questions about what iOS lets a data-usage app see. Those are answered first.</p>
+  <h1>Support</h1>
+  <p class="lede">One address, answered by the person who wrote the app. There is no ticket system, no in-app chat, and no crash reporting — so what you write is genuinely all there is to go on.</p>
 </header>
 
-<section>
-  <h2>Write to us</h2>
-  <p><b>contact@oshi-messenger.com</b></p>
-  <p class="dim">Include your iPhone model, your iOS version, whether you use one SIM or two, and the two numbers that disagree &mdash; RoamGuard's and your carrier's. That is almost always enough.</p>
+<section aria-labelledby="contact">
+  <h2 id="contact">Contact</h2>
+  <div class="panel">
+    <p class="panel-title">Email</p>
+    <p style="font-size:17px;font-weight:650;margin:0 0 8px"><a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+    <p class="small dim">Include, where relevant: your iOS version, whether the phone runs one line or two, what RoamGuard shows, what your carrier shows for the same period, and the dates involved. Screenshots help more than descriptions.</p>
+  </div>
 </section>
 
-<section>
-  <h2>The numbers disagree</h2>
-  <p class="dim">This is the most common report, and it is usually not a bug. RoamGuard counts from the moment it was installed; your carrier counts from the start of your billing cycle. If you installed mid-cycle, RoamGuard is missing everything before that.</p>
-  <p class="dim">The fix is one step: open RoamGuard, tap the pool that is wrong, and enter your carrier's current figure. RoamGuard realigns to it and carries on from there. Do this once after installing and once at the start of each cycle if you want it tight.</p>
+<section aria-labelledby="fixes">
+  <h2 id="fixes">Things that actually go wrong</h2>
+
+  <h3>No alerts are arriving</h3>
+  <p>Check these four, in order — the first two account for almost all of it:</p>
+  <ol>
+    <li><b>Notification permission.</b> iOS &rsaquo; Settings &rsaquo; Notifications &rsaquo; RoamGuard &rsaquo; Allow Notifications. Inside RoamGuard, <em>Settings &rsaquo; Sounds &rsaquo; Play a preview</em> will say outright if notifications are off.</li>
+    <li><b>Every threshold switched off.</b> Settings &rsaquo; Alert thresholds. With none selected, no threshold alert can fire.</li>
+    <li><b>Pause alerts on Wi-Fi is on</b> and you are on Wi-Fi. Only the 100% alert gets through in that state.</li>
+    <li><b>A Focus is filtering them.</b> Only the 100% alert is Time Sensitive, and only if <em>Alert me even during Focus</em> is on — and iOS still shows Time Sensitive notifications only when that Focus permits them.</li>
+  </ol>
+  <p class="small dim">Full detail: <a href="alerts.html">the alerts reference</a>.</p>
+
+  <h3>The number is far lower than my carrier's</h3>
+  <p>Almost always the start point: RoamGuard counts from the moment you installed it, not from your billing date. Install it on the 12th and the first eleven days are invisible to it. Use <em>Match my carrier's figure</em> once and it realigns; from the next full cycle the two track each other much more closely.</p>
+
+  <h3>The number is higher than my carrier's</h3>
+  <p>Usually zero-rated traffic your carrier does not bill, or Personal Hotspot data — the phone carried those bytes, so RoamGuard counted them. Carriers also round and batch. Realigning once absorbs the difference.</p>
+
+  <h3>It says I am not roaming, but I am abroad</h3>
+  <p>iOS gives apps no roaming API, so RoamGuard cannot detect it. Set it yourself in <em>Settings &rsaquo; Roaming &rsaquo; Current state</em> — a manual setting always wins and is always accurate. Turning on <em>Detect travel automatically</em> lets a device region different from your home region suggest roaming, which is a guess and is labelled as one on the dashboard.</p>
+
+  <h3>The widget looks stale</h3>
+  <p>The widget takes its own reading and asks iOS to refresh it roughly every half hour, paced to stay inside WidgetKit's daily budget. iOS decides when to grant that. Opening the app takes a reading immediately and reconciles the two.</p>
+
+  <h3>The Apple Watch shows &ldquo;No data yet&rdquo;</h3>
+  <p>The Watch app is a read-only mirror; it holds nothing of its own. Open RoamGuard on the iPhone once, with the Watch nearby, and the state is sent across.</p>
+
+  <h3>A roaming trip will not start</h3>
+  <p>The app says which of the three reasons applies: Live Activities are switched off for RoamGuard in iOS Settings; nothing has been measured yet so there is nothing to show; or iOS refused the request, which usually means another activity needs to end first.</p>
+
+  <h3>I want to start over</h3>
+  <p><em>Settings &rsaquo; Reset measurements</em> clears the recorded history on this device and starts counting from the next reading. Your plan settings are kept. With iCloud sync on, only this device's records are removed.</p>
 </section>
 
-<section>
-  <h2>Troubleshooting</h2>
-  <dl class="q">
-    <dt>An alert did not arrive</dt>
-    <dd>iOS Settings &rarr; Notifications &rarr; RoamGuard: allow notifications, with sounds. For the 100% alert to break through a Focus, Time Sensitive must be permitted.</dd>
-    <dt>The widget shows an old figure</dt>
-    <dd>iOS decides how often a widget refreshes. Opening the app updates it immediately.</dd>
-    <dt>The cycle reset on the wrong day</dt>
-    <dd>Set your cycle start date in RoamGuard's settings &mdash; it defaults to the 1st, which is not every carrier's billing day.</dd>
-    <dt>My second line is not tracked</dt>
-    <dd>Both lines must be active in iOS Settings &rarr; Cellular. RoamGuard shows a pool per line that iOS reports as enabled.</dd>
-    <dt>Restoring a purchase</dt>
-    <dd>Settings &rarr; Restore Purchases, on the Apple Account that bought it.</dd>
-  </dl>
+<section aria-labelledby="known">
+  <h2 id="known">What version 1.0 cannot do</h2>
+  <p>Listed here rather than discovered later.</p>
+  <div class="kv">
+    <dt>Your carrier's figure</dt><dd>Not available to any app. RoamGuard measures independently and lets you anchor to the carrier number by hand.</dd>
+    <dt>Roaming detection</dt><dd>Not available to any app. Your setting, or a device-region guess that is labelled as a guess.</dd>
+    <dt>Counting before install</dt><dd>Impossible. The first reading is a baseline and attributes nothing.</dd>
+    <dt>Per-app breakdown</dt><dd>Not offered. Interface counters are per interface, not per app, and the alternative — a VPN tunnel — was rejected on privacy and battery grounds.</dd>
+    <dt>Carrier or SIM names</dt><dd>Nothing public links a cellular context to a carrier, a slot or a number, so lines are numbered rather than named.</dd>
+    <dt>Editing the daily budget</dt><dd>The daily budget can only be set during first-run setup in 1.0. There is no Settings row for it yet.</dd>
+    <dt>Traffic across a reboot</dt><dd>Bytes carried between the last reading and a restart cannot be recovered — the kernel discarded them too.</dd>
+    <dt>Traffic across a teardown</dt><dd>Whatever a cellular context carried between the last reading and being torn down goes with it. RoamGuard under-counts that one interval on that one line rather than inventing a figure.</dd>
+    <dt>Background guarantees</dt><dd>iOS decides whether an app gets a background window. Totals survive a missed window; the record of which network was active during it does not.</dd>
+    <dt>Devices</dt><dd>iPhone, portrait, iOS 18.0 or later, with a watchOS 11.0 companion. There is no iPad or Mac build.</dd>
+  </div>
 </section>
 
-<section>
-  <h2>Privacy, briefly</h2>
-  <p class="dim">RoamGuard has no account, no analytics, no third-party SDKs and no location permission, and it makes no network requests of its own. Deleting the app deletes everything it held. The full text is in the <a href="privacy.html">privacy policy</a>.</p>
+<section aria-labelledby="more">
+  <h2 id="more">Before you write</h2>
+  <p>Two pages answer most of what arrives by mail: <a href="how-counting-works.html">How counting works</a> for anything about the number, and <a href="alerts.html">Alerts</a> for anything about notifications. <a href="faq.html">Questions</a> covers the rest.</p>
 </section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <nav>
+    <a href="index.html">Overview</a> <span class="sep">/</span>
+    <a href="how-counting-works.html">How counting works</a> <span class="sep">/</span>
+    <a href="alerts.html">Alerts</a> <span class="sep">/</span>
+    <a href="faq.html">FAQ</a> <span class="sep">/</span>
+    <a href="changelog.html">Changelog</a> <span class="sep">/</span>
+    <a href="privacy.html">Privacy</a> <span class="sep">/</span>
+    <a href="terms.html">Terms</a>
+  </nav>
+  <p class="legal">&copy; 2026 Oshi Lab &middot; <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
 </div>
-<footer><div class="wrap">
-  <a href="index.html">Home</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a><br><br>
-  &copy; 2026 Oshi Lab &middot; contact@oshi-messenger.com
-</div></footer>
+</footer>
+
 </body>
 </html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Questions — RoamGuard</title>
+<meta name="description" content="Specific answers about RoamGuard: why its number differs from the carrier's, what happens on reboot, dual SIM and hotspot behaviour, widget refresh, battery cost and privacy.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="strip" aria-label="RoamGuard">
+<div class="strip-inner">
+  <a class="id" href="index.html"><span class="led" aria-hidden="true"></span>RoamGuard</a>
+  <a href="index.html">Overview</a>
+  <a href="how-counting-works.html">Counting</a>
+  <a href="alerts.html">Alerts</a>
+  <a href="faq.html" aria-current="page">FAQ</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="support.html">Support</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+  <span class="spacer"></span>
+  <span class="cell meta">Questions</span>
+</div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <h1>Questions</h1>
+  <p class="lede">The ones that actually get asked, answered with what the app does rather than with what would be reassuring.</p>
+</header>
+
+<section aria-labelledby="numbers">
+  <h2 id="numbers">The number itself</h2>
+  <dl class="qa">
+
+    <dt>Why is RoamGuard's figure different from my carrier's?</dt>
+    <dd>
+      <p>Because it is a different measurement, taken somewhere else, starting at a different moment. Six reasons, in rough order of size:</p>
+      <ul>
+        <li><b>Start point.</b> RoamGuard's first reading is a baseline and counts nothing. Install it on the 12th and it has no idea what happened between the 1st and the 12th.</li>
+        <li><b>Zero-rating.</b> Carriers exclude some traffic from the bill. Your phone still carried those bytes, so RoamGuard counts them.</li>
+        <li><b>Rounding and batching.</b> Carriers post usage in batches, sometimes hours late and rounded up.</li>
+        <li><b>Measurement point.</b> The carrier counts at the network edge; the device counts at the interface. Protocol overhead lands differently.</li>
+        <li><b>Hotspot.</b> Anything tethered to your Personal Hotspot is counted here, because the phone carried it.</li>
+        <li><b>Roaming classification.</b> If the roaming switch was wrong for part of a trip, the totals still add up but the home/roaming split does not.</li>
+      </ul>
+      <p>The fix is <a href="how-counting-works.html#realign">Match my carrier's figure</a>: type in what the carrier says once, and the running total realigns.</p>
+    </dd>
+
+    <dt>Can it show me my real carrier usage, like the operator's own app does?</dt>
+    <dd><p>No, and nothing on the App Store can. Your carrier's app knows the figure because it is signed in to your account and asks the carrier's servers. iOS provides no API that reports plan usage to a third-party app. RoamGuard measures independently and lets you anchor it to the carrier's number instead of pretending to have it.</p></dd>
+
+    <dt>Does it know when I am roaming?</dt>
+    <dd>
+      <p>No. iOS gives apps no roaming API at all. The <code>CTCarrier</code> class that used to report a carrier and country was deprecated in iOS&nbsp;16 and now returns placeholder values, so RoamGuard does not use it.</p>
+      <p>Instead: your Home/Roaming setting wins outright. If &ldquo;Detect travel automatically&rdquo; is on, a device region different from your home region will suggest roaming. The dashboard always labels which of the two produced the answer, and says &ldquo;iOS does not report roaming status to apps&rdquo; on the same card.</p>
+    </dd>
+
+    <dt>I am at 80% and it says my chance of going over is 0%. Is that broken?</dt>
+    <dd><p>No. The two figures answer different questions. 80% is where you are. The probability is about where the cycle <em>ends</em>: if you are at 80% on the 29th of a 30-day cycle, one more day at your usual pace lands well inside the allowance, so the risk really is negligible. The estimate uses the spread of your own daily usage this cycle, and with fewer than three observed days it deliberately assumes a wide spread rather than reporting a confident zero.</p></dd>
+
+    <dt>Does Wi-Fi count against my allowance?</dt>
+    <dd><p>No. Wi-Fi bytes are measured and recorded separately, and are never charged to the home or roaming pool. Cellular bytes are charged only when cellular is the active path at the moment of a reading, or when nothing is connected at all — the cellular interface can tick over slightly during a Wi-Fi handover and billing that would be wrong.</p></dd>
+
+  </dl>
+</section>
+
+<section aria-labelledby="behaviour">
+  <h2 id="behaviour">Behaviour</h2>
+  <dl class="qa">
+
+    <dt>Does it keep counting if I never open the app?</dt>
+    <dd>
+      <p>Yes, and this is the part most usage trackers get wrong. The kernel's counters are cumulative since the device booted, so nothing depends on the app being awake at the right moment. RoamGuard takes a reading when you open it, when the network path changes, and whenever iOS grants it a background refresh window (requested no sooner than every 15 minutes). A missed window loses no traffic — the next reading, hours or days later, includes everything in between.</p>
+      <p>The one thing that suffers across a long gap is attribution: RoamGuard knows the bytes moved, but not which network was active for the whole gap.</p>
+    </dd>
+
+    <dt>What happens when I restart my iPhone?</dt>
+    <dd><p>The kernel resets every interface counter to zero. RoamGuard detects the restart from the system boot time rather than guessing from the numbers, re-anchors every interface in one step, and counts only post-boot bytes. Days already recorded keep their values. The only unrecoverable traffic is whatever moved between the last reading and the restart, which the kernel forgot as well.</p></dd>
+
+    <dt>What about Airplane Mode, or switching a line off?</dt>
+    <dd><p>That destroys the cellular context; when it comes back its counters start at zero. RoamGuard identifies interfaces by name <em>and</em> kernel index — iOS reuses names like <code>pdp_ip1</code>, so only the index reveals a rebuilt context. Only that one interface re-anchors; other lines keep measuring uninterrupted. The same check applies to <code>en0</code> when Wi-Fi is toggled off and on.</p></dd>
+
+    <dt>Two SIMs, or a travel eSIM — does it cope?</dt>
+    <dd>
+      <p>Yes, and specifically so. Each cellular context is resolved on its own and the results are summed afterwards. Resolving the sum instead would mean that switching a second line on re-anchors everything and books every already-counted byte a second time: a phone sitting at 3.2&nbsp;GB would instantly show 6.4.</p>
+      <p>Each line can also be pinned to its own pool, so a home line and a local eSIM running at once do not contaminate each other. Lines start on &ldquo;follow the switch&rdquo;, so a single-SIM phone behaves as if none of this existed. Lines are numbered rather than named, because nothing public links a cellular context to a carrier, a SIM slot or a phone number — a guessed label would be worse than no label.</p>
+    </dd>
+
+    <dt>Is Personal Hotspot traffic included?</dt>
+    <dd><p>Yes. Your laptop's download goes through the phone's cellular interface, so the phone carried it and your carrier will bill it. Excluding it would make the number optimistic in exactly the situation where people get caught out.</p></dd>
+
+    <dt>Why does my widget show a slightly different number from the app?</dt>
+    <dd><p>It should not be behind. The widget does not merely re-display what the app last published: it takes its own counter reading and projects the published state forward, then asks iOS for a refresh roughly every 30 minutes, paced to stay inside WidgetKit's daily budget. The widget never writes anything back, so the app remains the only owner of the baseline and nothing is counted twice. If the two disagree by a little, the widget is showing a moment the app has not sampled yet; opening the app reconciles them.</p></dd>
+
+    <dt>Will it drain my battery?</dt>
+    <dd><p>There are no timers, no polling loops, no location updates and no network requests. A reading is <code>getifaddrs</code> — a local system call that needs no permission and returns immediately. Work happens when you open the app, when the network path changes, or during a background window iOS chose to grant.</p></dd>
+
+    <dt>Why does the Live Activity disappear?</dt>
+    <dd><p>Because it is scoped to a roaming <em>trip</em>, not to the billing cycle. A data counter has no natural beginning or end, and pinning an activity to a month-long cycle would park it on the Lock Screen until you dismissed it as clutter. So it starts when roaming begins, shows trip usage alongside cycle usage, and clears two minutes after the trip ends, leaving the final total on screen in the meantime.</p></dd>
+
+  </dl>
+</section>
+
+<section aria-labelledby="privacy">
+  <h2 id="privacy">Privacy and data</h2>
+  <dl class="qa">
+
+    <dt>Does it track my location?</dt>
+    <dd><p>No. RoamGuard never requests location permission, so iOS would refuse it even if the code asked. Travel detection compares your device's region setting with your home region — a locale string, not a position.</p></dd>
+
+    <dt>Does anything leave my phone?</dt>
+    <dd><p>No. The app contains no networking code of its own: no analytics, no telemetry, no crash reporting, no attribution SDK, no update check. Its privacy manifest declares no collected data types and no tracking, and it declares the three required-reason APIs it does use — system boot time, user defaults and free disk space.</p></dd>
+
+    <dt>Does it read what I am browsing or sending?</dt>
+    <dd><p>No, and it could not. It reads byte <em>counters</em> — how much an interface has carried — never the traffic itself. It is also explicitly not a VPN. Routing your traffic through a local packet tunnel would give more precise per-app figures, and was rejected: for a utility whose whole point is that nothing leaves your phone, asking to intercept every packet is the wrong trade.</p></dd>
+
+    <dt>Is there an account, or a subscription?</dt>
+    <dd><p>There is no account and no sign-in. The app contains no purchasing code at all — no in-app purchases, no subscription, no paywall.</p></dd>
+
+    <dt>Can I move my history to a new iPhone?</dt>
+    <dd><p>Turn on <b>Settings &rsaquo; Sync history with iCloud</b> before you switch. It is off by default; when on, records go through your own private iCloud database and carry a device identifier, so an iPhone and an iPad on one account are never added together. Otherwise the history lives in the app's container on the device and comes back with a full device backup restore. Setting up a new phone from scratch starts the count from zero.</p></dd>
+
+    <dt>Can I get my data out?</dt>
+    <dd><p>Yes. History exports as CSV or PDF from the History screen, handed straight to the iOS share sheet. RoamGuard does not upload the file; where it goes is entirely your choice.</p></dd>
+
+  </dl>
+</section>
+
+<section aria-labelledby="support">
+  <h2 id="support">Still stuck?</h2>
+  <p>Write to <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a>. What helps most: your iOS version, whether you run one SIM or two, what the app shows, and what your carrier shows for the same period. There is no crash reporting, so a description is genuinely all there is to go on.</p>
+</section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <nav>
+    <a href="index.html">Overview</a> <span class="sep">/</span>
+    <a href="how-counting-works.html">How counting works</a> <span class="sep">/</span>
+    <a href="alerts.html">Alerts</a> <span class="sep">/</span>
+    <a href="changelog.html">Changelog</a> <span class="sep">/</span>
+    <a href="support.html">Support</a> <span class="sep">/</span>
+    <a href="privacy.html">Privacy</a> <span class="sep">/</span>
+    <a href="terms.html">Terms</a>
+  </nav>
+  <p class="legal">&copy; 2026 Oshi Lab &middot; <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+</div>
+</footer>
+
+</body>
+</html>

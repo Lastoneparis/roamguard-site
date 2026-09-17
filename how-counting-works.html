@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How counting works — RoamGuard</title>
+<meta name="description" content="The method behind RoamGuard's number: which iOS APIs it reads, how it survives 32-bit counter wraps, reboots and SIM changes, and exactly what realigning to your carrier's figure does.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="strip" aria-label="RoamGuard">
+<div class="strip-inner">
+  <a class="id" href="index.html"><span class="led" aria-hidden="true"></span>RoamGuard</a>
+  <a href="index.html">Overview</a>
+  <a href="how-counting-works.html" aria-current="page">Counting</a>
+  <a href="alerts.html">Alerts</a>
+  <a href="faq.html">FAQ</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="support.html">Support</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+  <span class="spacer"></span>
+  <span class="cell meta">Method</span>
+</div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <h1>How counting works</h1>
+  <p class="lede">RoamGuard's number is an independent measurement taken on your iPhone, not a copy of your carrier's accounting. This page says exactly where it comes from, where it can drift, and what happens when you correct it.</p>
+</header>
+
+<section aria-labelledby="available">
+  <h2 id="available">What iOS gives an app, and what it does not</h2>
+  <div class="tw">
+  <table>
+    <caption>Public APIs relevant to measuring mobile data</caption>
+    <thead><tr><th>Need</th><th>Public API</th><th>Used</th></tr></thead>
+    <tbody>
+      <tr><td>Bytes carried per network interface</td><td><code>getifaddrs(3)</code> &rarr; <code>if_data</code></td><td>Yes. POSIX, no entitlement, no permission prompt.</td></tr>
+      <tr><td>Reboot detection</td><td><code>sysctl(kern.boottime)</code></td><td>Yes. Declared in the privacy manifest under reason <code>35F9.1</code>.</td></tr>
+      <tr><td>Cellular vs Wi-Fi, Low Data Mode</td><td><code>NWPathMonitor</code></td><td>Yes.</td></tr>
+      <tr><td>Radio generation (5G / LTE / 3G)</td><td><code>serviceCurrentRadioAccessTechnology</code></td><td>Yes. One entry per SIM.</td></tr>
+      <tr><td>Which line is carrying data</td><td><code>dataServiceIdentifier</code></td><td>Yes, to pick between lines.</td></tr>
+      <tr><td>Carrier name, MCC/MNC, country</td><td><code>CTCarrier</code></td><td>No. Deprecated in iOS&nbsp;16; returns <code>"--"</code> and <code>"65535"</code>.</td></tr>
+      <tr><td>Per-plan or per-app usage</td><td>&mdash;</td><td>No such API exists.</td></tr>
+      <tr><td>Roaming status</td><td>&mdash;</td><td>No such API exists.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The last two rows are the reason this page is long. Everything RoamGuard does is an attempt to be useful and honest in their absence.</p>
+
+  <h3>Why not route traffic through a VPN</h3>
+  <p>A local packet tunnel (<code>NEPacketTunnelProvider</code>) would give exact per-flow byte counts. It was rejected on purpose. It asks you to install a VPN profile and grant sweeping network access; it breaks whenever the tunnel drops; it competes with any VPN you actually want to use; and it costs measurable battery. For an app whose whole point is that nothing leaves your phone, asking to intercept every packet is the wrong trade. The kernel's interface counters give the same figure for far less.</p>
+</section>
+
+<section aria-labelledby="wrap">
+  <h2 id="wrap">The counters are 32-bit, and they wrap</h2>
+  <p><code>if_data</code> byte counters are 32-bit. They roll over every 4&nbsp;GiB. On a 35&nbsp;GB plan that is roughly nine roll-overs per cycle.</p>
+  <p>The naive implementation widens both readings to 64-bit, subtracts, gets a negative number, clamps it to zero, and silently loses 4&nbsp;GiB every time. That single mistake is the largest source of error in data-usage apps.</p>
+  <p>RoamGuard subtracts in 32-bit modular arithmetic instead (<code>new &amp;- old</code>), which recovers the true delta exactly, as long as less than 4&nbsp;GiB moved between two readings.</p>
+
+  <div class="meter">
+    <div class="meter-head">
+      <span class="meter-label">Counter · one 4 GiB span</span>
+      <span class="meter-value warn">wraps to 0</span>
+    </div>
+    <div class="track"><i class="fill warn" style="width:100%"></i></div>
+    <div class="scale"><span>0</span><span>2 GiB</span><span>4 GiB</span></div>
+    <p class="meter-caption">Each wrap is a delta of <b>4&nbsp;GiB minus the old reading, plus the new one</b> — not a negative number, and not a zero.</p>
+  </div>
+
+  <h3>Four other things look exactly like a wrap</h3>
+  <p>If you only inspect the numbers, a reboot, a torn-down cellular context, a newly switched-on line and a silent counter reset are indistinguishable from a roll-over. Each is therefore detected by something other than the numbers.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Situation</th><th>How it is detected</th><th>What RoamGuard does</th></tr></thead>
+    <tbody>
+      <tr><td>Counter passed 4 GiB</td><td>Modular subtraction</td><td>Recovers the delta exactly.</td></tr>
+      <tr><td>Device rebooted</td><td>The <code>kern.boottime</code> token changed</td><td>Re-anchors every context at once and counts only post-boot bytes.</td></tr>
+      <tr><td>A cellular context was rebuilt</td><td>The kernel interface index changed under the same name</td><td>Re-anchors that one context. Other lines keep measuring.</td></tr>
+      <tr><td>A line came up or went away</td><td>The context is missing from one of the two readings</td><td>Counts that context's own bytes only; other lines are untouched.</td></tr>
+      <tr><td>Counters reset with no other signal</td><td>The implied throughput exceeds 1&nbsp;Gbps for the elapsed time</td><td>Treated as a reset rather than 4 GiB of traffic.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small dim">The throughput guard is a last line of defence, not the main mechanism. It can only bite on short intervals: across a fifteen-minute background gap the plausible budget already exceeds 4&nbsp;GiB, so any wrap is arithmetically believable. Boot time and interface identity are what actually carry the work. The guard is applied per interface, since the ceiling describes what one radio bearer can carry.</p>
+</section>
+
+<section aria-labelledby="multisim">
+  <h2 id="multisim">One context at a time, summed afterwards</h2>
+  <p>A phone holds several cellular interfaces simultaneously — one per active data line, plus IMS/VoLTE and MMS contexts alongside them. RoamGuard resolves each of them separately and adds the results up.</p>
+  <p>Doing it the other way round breaks. Once the contexts are added together, a line coming or going invalidates the total, and re-anchoring credits everything already counted as brand new traffic. A phone sitting at 3.2&nbsp;GB would book a second, phantom 3.2&nbsp;GB the moment a second SIM was switched on.</p>
+  <p>Interface identity is the name <em>and</em> the kernel index, because iOS reuses the names. A rebuilt <code>pdp_ip1</code> is a different interface with counters back at zero, and only the index says so. There is no fixed limit on how many contexts are tracked, and the same identity check applies to <code>en0</code> when Wi-Fi is toggled off and on.</p>
+  <p>Because of this, an unusual event on one line costs at most that one line's traffic, for a single interval.</p>
+</section>
+
+<section aria-labelledby="when">
+  <h2 id="when">When a reading is taken</h2>
+  <div class="kv">
+    <dt>You open the app</dt><dd>A reading is taken immediately.</dd>
+    <dt>The network changes</dt><dd><code>NWPathMonitor</code> reports a path change and a reading is taken.</dd>
+    <dt>Background refresh</dt><dd>A <code>BGAppRefreshTask</code> is requested no sooner than every 15 minutes. iOS decides whether and when to grant it.</dd>
+  </div>
+  <p style="margin-top:12px">There are no timers and no polling. That is why the battery cost is close to nothing, and it is also why a missed background window loses nothing: the kernel counters are cumulative since boot, so the next reading &mdash; in an hour or in three days &mdash; picks up everything that happened in between.</p>
+  <p>The one thing a missed window does cost is <em>attribution</em>. RoamGuard knows how many bytes moved, but not which network was active during the gap. Traffic is charged to cellular only when cellular is the active path at the moment of the reading, or when nothing is connected at all; the cellular interface can tick over slightly during a Wi-Fi handover, and charging that to your plan would be wrong. The &ldquo;time on each network&rdquo; readout in Settings is similarly a sample, not a complete log: an interval longer than 30 minutes is not attributed to either network.</p>
+</section>
+
+<section aria-labelledby="pools">
+  <h2 id="pools">Which pool a byte is charged to</h2>
+  <p>Wi-Fi bytes are recorded separately and never counted against your plan.</p>
+  <p>Cellular bytes go to the home pool or the roaming pool, and the decision is made in this order:</p>
+  <ol>
+    <li><b>Your setting wins.</b> Home or Roaming, set by hand in Settings, is the source of truth and is labelled on the dashboard as &ldquo;You set this manually.&rdquo;</li>
+    <li><b>Region drift can suggest a change.</b> If &ldquo;Detect travel automatically&rdquo; is on and your device region differs from your home region, RoamGuard infers roaming. No permission, no location access. The dashboard labels it &ldquo;Estimated from your device region.&rdquo;</li>
+    <li><b>Otherwise it assumes home</b>, and says so: &ldquo;Assumed to be your home network. iOS does not report roaming status to apps.&rdquo;</li>
+  </ol>
+  <p>The screen always states which of the three produced the answer, so an estimate is never presented as a fact.</p>
+  <p>On a dual-SIM phone each line can additionally be pinned to its own pool, which the device-wide switch cannot express. That assignment is pinned to the line's kernel index: when the context is rebuilt the answer goes stale, the line falls back to the switch, and the app asks again rather than charging one line's gigabytes to the other line's pool.</p>
+</section>
+
+<section aria-labelledby="cycle">
+  <h2 id="cycle">The billing cycle, reboots and resets</h2>
+  <h3>Cycle boundaries</h3>
+  <p>You pick a billing day from 1 to 31. In a month shorter than the day you picked, the cycle restarts on that month's last day &mdash; &ldquo;the 31st&rdquo; behaves correctly in February, and across leap years and daylight-saving changes.</p>
+  <p>Nothing is deleted when a cycle rolls over. Daily records are kept; the dashboard and the alert ledger simply scope themselves to the current cycle, so the same threshold alert fires again next month instead of staying silent forever.</p>
+  <h3>Reboots</h3>
+  <p>A reboot resets every kernel counter to zero at once. It is detected by the boot-time token, not inferred from the numbers, and every context is re-anchored in the same step. Bytes carried before the restart stay on the days they were recorded; bytes carried after it are counted from zero. The only traffic that cannot be recovered is what moved between the last reading and the restart itself &mdash; the kernel forgot it too.</p>
+  <h3>Reset measurements</h3>
+  <p>Settings &rsaquo; Reset measurements clears the recorded history from this device and starts counting again from the next reading. Your plan settings are kept. If iCloud sync is on, only this device's records are removed; history another device contributed is not touched.</p>
+</section>
+
+<section aria-labelledby="realign">
+  <h2 id="realign">What &ldquo;match my carrier's figure&rdquo; actually does</h2>
+  <p>This is the honest answer to the accuracy gap, so it is worth being precise about the arithmetic.</p>
+  <p>You enter the figure your carrier reports for the current cycle. RoamGuard then:</p>
+  <ol>
+    <li>Computes what it has measured for that pool <em>so far in the current cycle</em>.</li>
+    <li>Stores a calibration record — the reported figure, the measured figure, the date and the device — so the correction is auditable rather than invisible.</li>
+    <li>Takes the difference, <code>reported &minus; measured</code>, and applies it to <b>today's record only</b>. The result is floored at zero, so a downward correction larger than today's traffic empties today rather than going negative.</li>
+  </ol>
+
+  <div class="meter">
+    <div class="meter-head">
+      <span class="meter-label">Before · measured this cycle</span>
+      <span class="meter-value warn">8.2 GB</span>
+    </div>
+    <div class="track"><i class="fill warn" style="width:41%"></i></div>
+    <p class="meter-caption">Carrier says <b>9.6&nbsp;GB</b>. The difference is <b>+1.4&nbsp;GB</b>.</p>
+  </div>
+  <div class="meter">
+    <div class="meter-head">
+      <span class="meter-label">After · realigned</span>
+      <span class="meter-value over">9.6 GB</span>
+    </div>
+    <div class="track"><i class="fill over" style="width:48%"></i></div>
+    <p class="meter-caption">Today's record absorbs the whole <b>+1.4&nbsp;GB</b>. Every earlier day keeps the value that was actually measured, so the history stays a record of observations rather than being rewritten.</p>
+  </div>
+
+  <p>Measurement continues normally from there. Calibration is an anchor, not a mode: nothing about how bytes are counted changes afterwards.</p>
+</section>
+
+<section aria-labelledby="drift">
+  <h2 id="drift">Why the two numbers differ in the first place</h2>
+  <ul>
+    <li><b>Start point.</b> RoamGuard's first reading establishes a baseline and attributes nothing. If you installed it on the 12th, it has no idea what happened between the 1st and the 12th.</li>
+    <li><b>Zero-rating.</b> Carriers exclude some traffic from the bill &mdash; their own portal, some streaming bundles, some messaging. Your phone still carried those bytes, so RoamGuard counts them.</li>
+    <li><b>Rounding and batching.</b> Carriers round sessions and post usage in batches, sometimes hours late, sometimes to the next 10&nbsp;MB.</li>
+    <li><b>Measurement point.</b> The carrier counts at the network edge, including protocol overhead the device counts differently.</li>
+    <li><b>Hotspot.</b> Devices tethered to your Personal Hotspot are counted by RoamGuard, because the phone carries their traffic.</li>
+    <li><b>Roaming classification.</b> If the roaming switch was wrong for part of a trip, bytes landed in the other pool. The totals still add up; the split does not.</li>
+  </ul>
+  <div class="note">
+    <p>Your carrier's figure is the one that gets billed. RoamGuard exists so that figure never surprises you, not to replace it.</p>
+  </div>
+</section>
+
+<section aria-labelledby="storage">
+  <h2 id="storage">Where the numbers live</h2>
+  <div class="kv">
+    <dt>Daily totals</dt><dd>On this device, in the app's own container.</dd>
+    <dt>Settings and last reading</dt><dd>In the app group shared with the widget and the Watch app.</dd>
+    <dt>Widgets and Watch</dt><dd>Read a small published snapshot, never the database.</dd>
+    <dt>iCloud</dt><dd>Off by default. When enabled, records sync through your private iCloud database and carry a device identifier, so an iPhone and an iPad on one account are never added together.</dd>
+    <dt>Anywhere else</dt><dd>Nowhere. The app makes no network requests of its own.</dd>
+  </div>
+</section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <nav>
+    <a href="index.html">Overview</a> <span class="sep">/</span>
+    <a href="alerts.html">Alerts</a> <span class="sep">/</span>
+    <a href="faq.html">FAQ</a> <span class="sep">/</span>
+    <a href="changelog.html">Changelog</a> <span class="sep">/</span>
+    <a href="support.html">Support</a> <span class="sep">/</span>
+    <a href="privacy.html">Privacy</a> <span class="sep">/</span>
+    <a href="terms.html">Terms</a>
+  </nav>
+  <p class="legal">&copy; 2026 Oshi Lab &middot; <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+</div>
+</footer>
+
+</body>
+</html>

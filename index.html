@@ -3,90 +3,185 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RoamGuard — know before you go over</title>
-<meta name="description" content="Tracks the data your iPhone actually carries, keeps home and roaming as separate pools, and warns you before an overage instead of after.">
-<link rel="stylesheet" href="assets/style.css">
+<title>RoamGuard — mobile data and roaming meter for iPhone</title>
+<meta name="description" content="RoamGuard measures the mobile data your iPhone carries, keeps home and roaming as separate pools, and projects where the billing cycle ends before you get there.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="panel.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<div class="strip"><div class="wrap">
-  <span><b>No account</b></span>
-  <span><b>No analytics</b></span>
-  <span><b>No location access</b></span>
-  <span><b>0</b> network requests of its own</span>
-</div></div>
+<nav class="strip" aria-label="RoamGuard">
+<div class="strip-inner">
+  <a class="id" href="index.html"><span class="led" aria-hidden="true"></span>RoamGuard</a>
+  <a href="index.html" aria-current="page">Overview</a>
+  <a href="how-counting-works.html">Counting</a>
+  <a href="alerts.html">Alerts</a>
+  <a href="faq.html">FAQ</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="support.html">Support</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+  <span class="spacer"></span>
+  <span class="cell meta">1.0 · iOS 18</span>
+</div>
+</nav>
 
-<div class="wrap">
+<main id="main">
+
 <header class="hero">
   <h1>Know before you go over</h1>
-  <p class="lede">RoamGuard watches the data this iPhone carries and tells you &mdash; early, and in plain language &mdash; when you are heading for an overage. Two SIMs are charged to two separate pools.</p>
+  <p class="lede">RoamGuard reads the byte counters iOS keeps for each network interface, charges what it measures to a home pool or a roaming pool, and tells you where the cycle is heading days before you get there. It runs entirely on your iPhone. It has no account, no analytics, and no network layer of its own.</p>
 </header>
 
-<section>
-  <h2>What you see</h2>
-  <div class="meter">
-    <div class="row"><span class="lbl">HOME &middot; 20 GB plan</span><span class="val">7.4 GB left</span></div>
-    <div class="bar"><i style="width:63%;background:var(--safe)"></i></div>
-    <div class="foot">At the current rate you finish the cycle 1.2&nbsp;GB under. 9 days remain.</div>
+<section aria-labelledby="limits">
+  <h2 id="limits">Read this first — what iOS will not give an app</h2>
+
+  <div class="note hard">
+    <p><b>iOS does not expose your carrier's usage figure to apps.</b> There is no public API that reports &ldquo;you have used 24&nbsp;GB of your 35&nbsp;GB plan&rdquo;. RoamGuard cannot show you your bill, and neither can anything else on the App Store.</p>
+    <p><b>iOS does not tell an app whether you are roaming.</b> No public API reports roaming status. <code>CTCarrier</code>, which once gave a carrier name and country, was deprecated in iOS 16 and now returns placeholder values, so RoamGuard does not use it.</p>
   </div>
-  <div class="meter">
-    <div class="row"><span class="lbl">ROAMING &middot; 5 GB allowance</span><span class="val">0.6 GB left</span></div>
-    <div class="bar"><i style="width:12%;background:var(--over)"></i></div>
-    <div class="foot">At the current rate the allowance runs out in 2 days &mdash; before the cycle ends.</div>
+
+  <p>Those two facts decide the whole design, so they belong at the top of this page rather than at the bottom.</p>
+
+  <div class="kv">
+    <dt>What it measures</dt><dd>Bytes carried by this iPhone's cellular and Wi-Fi interfaces, read from the kernel's own counters.</dd>
+    <dt>When it starts</dt><dd>At the first reading after you install it — not at the start of your billing cycle.</dd>
+    <dt>Roaming state</dt><dd>Your setting. Optionally an estimate from your device region, which is labelled as an estimate on screen.</dd>
+    <dt>Hotspot traffic</dt><dd>Counted, because the phone genuinely carries it.</dd>
+    <dt>Fixing the gap</dt><dd>Type your carrier's figure in once. RoamGuard realigns the running total and carries on from there.</dd>
   </div>
-  <p class="dim" style="margin-top:14px">The projection is the point. A remaining-data figure tells you where you are; RoamGuard tells you where you will end up if nothing changes.</p>
+
+  <p class="small dim" style="margin-top:12px">The app says all of this on its own dashboard and in Settings &rsaquo; How it works. The full method is written out in <a href="how-counting-works.html">How counting works</a>.</p>
 </section>
 
-<section>
-  <h2>Alerts</h2>
+<section aria-labelledby="meters">
+  <h2 id="meters">What a pool looks like</h2>
+
+  <div class="meter">
+    <div class="meter-head">
+      <span class="meter-label">Home &middot; 20 GB allowance</span>
+      <span class="meter-value safe">11.8 GB left</span>
+    </div>
+    <div class="track"><i class="fill safe" style="width:41%"></i></div>
+    <div class="scale"><span>0</span><span>50%</span><span>100%</span></div>
+    <p class="meter-caption">Used 8.2&nbsp;GB in 30 days. Daily average 0.27&nbsp;GB. At this rate the cycle ends at <b>8.5&nbsp;GB</b> &mdash; inside the allowance. Chance of going over: <b>0%</b>.</p>
+  </div>
+
+  <div class="meter">
+    <div class="meter-head">
+      <span class="meter-label">Roaming &middot; 5 GB allowance</span>
+      <span class="meter-value over">0.6 GB left</span>
+    </div>
+    <div class="track"><i class="fill over" style="width:88%"></i></div>
+    <div class="scale"><span>0</span><span>50%</span><span>100%</span></div>
+    <p class="meter-caption">At the current pace the allowance runs out in <b>2 days</b> &mdash; before the cycle rolls over. Stay under <b>0.15&nbsp;GB a day</b> to finish inside it.</p>
+  </div>
+
+  <p class="small dim">The two bars above are diagrams drawn in HTML, not screenshots. The projection line is the point of the app: a remaining-data figure tells you where you are, the projection tells you where you end up if nothing changes.</p>
+</section>
+
+<section aria-labelledby="forecast">
+  <h2 id="forecast">How the projection is computed</h2>
+  <p>The projected total is a linear run rate: what you have used this cycle, extended over the days that are left.</p>
+  <p>The <em>chance of going over</em> is separate. Each remaining day is treated as a draw from the daily usage RoamGuard has actually observed this cycle, so the remaining total has mean <code>n&middot;&mu;</code> and variance <code>n&middot;&sigma;&sup2;</code>, and the probability follows from the normal distribution. With fewer than three observed days there is not enough spread to estimate, so a deliberately wide default is used rather than reporting a confident 0%.</p>
+  <p>The risk badge reads <b>On track</b>, <b>Watch out</b> or <b>At risk</b>, and it is never colour alone.</p>
+  <div class="tw">
   <table>
-    <thead><tr><th>Trigger</th><th>What it means</th><th class="n">Breaks Focus</th></tr></thead>
+    <caption>Risk badge thresholds</caption>
+    <thead><tr><th>Badge</th><th>Raised when</th></tr></thead>
     <tbody>
-      <tr><td>50%</td><td>Half the allowance is gone</td><td class="n">No</td></tr>
-      <tr><td>80%</td><td>Time to be deliberate</td><td class="n">No</td></tr>
-      <tr><td>95%</td><td>Last warning before cost</td><td class="n">No</td></tr>
-      <tr><td>100%</td><td>You are now paying per megabyte</td><td class="n">Yes</td></tr>
-      <tr><td>Daily budget</td><td>50 / 75 / 100% of a ceiling you set</td><td class="n">No</td></tr>
+      <tr><td>On track</td><td>Neither condition below is met.</td></tr>
+      <tr><td>Watch out</td><td>75% of the allowance is used, or the chance of going over reaches 20%.</td></tr>
+      <tr><td>At risk</td><td>100% of the allowance is used, or the chance of going over reaches 50%.</td></tr>
     </tbody>
   </table>
-  <p class="dim" style="margin-top:14px">Only the limit alert is allowed to break through Focus, because that is the one that costs real money.</p>
-</section>
-
-<section>
-  <h2>Where it shows up</h2>
-  <p class="dim">Home Screen and Lock Screen widgets, a Live Activity for the length of a trip, an Apple Watch app with complications, and Siri and Shortcuts for asking without unlocking.</p>
-</section>
-
-<section>
-  <h2>What iOS does and does not allow</h2>
-  <div class="limits">
-    <h3>Read this before you rely on it</h3>
-    <p>iOS does not hand an app your carrier's usage figure, and it does not tell an app whether you are roaming. No app on the App Store can do either.</p>
-    <p>So RoamGuard measures the data this iPhone carries, starting from the moment you install it, and lets you set your roaming state yourself. Whenever you check your carrier's own number, type it in once and RoamGuard realigns to it.</p>
-    <p>Your carrier's figure is the one that gets billed. RoamGuard exists so that figure never surprises you.</p>
   </div>
 </section>
 
-<section>
-  <h2>Questions</h2>
-  <dl class="q">
-    <dt>Why is RoamGuard's number different from my carrier's?</dt>
-    <dd>It counts from installation, and carriers round and batch differently. Enter the carrier figure once and RoamGuard realigns to it.</dd>
-    <dt>Does it track my location?</dt>
-    <dd>No. RoamGuard never requests location permission. You tell it when you are roaming.</dd>
-    <dt>Does it send my usage anywhere?</dt>
-    <dd>No. The app makes no network requests of its own. There is no account and no analytics.</dd>
-    <dt>Two SIMs?</dt>
-    <dd>Each line is charged to its own home or roaming pool, so a work eSIM and a personal SIM do not contaminate each other's figures.</dd>
-  </dl>
+<section aria-labelledby="inapp">
+  <h2 id="inapp">In the app</h2>
+  <div class="shots">
+    <figure class="shot">
+      <img src="assets/shot-2.png" alt="RoamGuard dashboard: a ring showing 11.8 GB left with an On track badge, tiles for used, daily average, days left and safe daily pace." loading="lazy" width="620" height="1347">
+      <figcaption>Dashboard. Home and roaming are two tabs over two separate pools.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="assets/shot-3.png" alt="RoamGuard forecast card showing a projected end of cycle, a daily usage chart, the connection card and an About these numbers card." loading="lazy" width="620" height="1347">
+      <figcaption>Forecast, daily chart, and the card that states what the numbers are not.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="assets/shot-4.png" alt="RoamGuard history screen listing daily totals with a summary of used, daily average and busiest day." loading="lazy" width="620" height="1347">
+      <figcaption>History, day by day. Exportable as CSV or PDF.</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="assets/shot-1.png" alt="RoamGuard welcome screen listing projection, threshold alerts and on-device privacy." loading="lazy" width="620" height="1347">
+      <figcaption>Setup: billing day, two allowances, thresholds. Under a minute.</figcaption>
+    </figure>
+  </div>
 </section>
-</div>
 
-<footer><div class="wrap">
-  <a href="support.html">Support</a> &middot;
-  <a href="privacy.html">Privacy</a> &middot;
-  <a href="terms.html">Terms</a><br><br>
-  &copy; 2026 Oshi Lab &middot; contact@oshi-messenger.com
-</div></footer>
+<section aria-labelledby="surfaces">
+  <h2 id="surfaces">Where the number shows up</h2>
+  <div class="kv">
+    <dt>Home Screen</dt><dd>A small or medium widget with what is left and how long the cycle has to run.</dd>
+    <dt>Lock Screen</dt><dd>Circular, rectangular and inline accessory widgets.</dd>
+    <dt>Live Activity</dt><dd>Scoped to a roaming <em>trip</em>, not to the billing cycle: it appears when roaming starts, shows trip usage alongside cycle usage, and clears two minutes after the trip ends.</dd>
+    <dt>Apple Watch</dt><dd>A read-only mirror, updated from the iPhone over WatchConnectivity, with complications.</dd>
+    <dt>Siri &amp; Shortcuts</dt><dd>Remaining mobile data, remaining roaming data, data used today, days left in the cycle, refresh usage, and switch roaming on or off.</dd>
+    <dt>Export</dt><dd>CSV and PDF of your daily history, handed to the iOS share sheet.</dd>
+  </div>
+</section>
+
+<section aria-labelledby="dual">
+  <h2 id="dual">Two SIMs</h2>
+  <p>A phone with two lines runs several cellular contexts at once &mdash; <code>pdp_ip0</code>, <code>pdp_ip1</code> and others &mdash; which appear, disappear and restart independently. RoamGuard resolves each context on its own and sums afterwards. Summing first and resolving after is not a shortcut, it is a bug: one line switching on would re-anchor the total and book every byte already counted a second time.</p>
+  <p>Each line can also be charged to its own pool, because a device-wide Home/Roaming switch cannot describe a home line and a local eSIM running side by side. Lines start on &ldquo;follow the switch&rdquo;, so a single-SIM phone behaves as if none of this existed.</p>
+  <p class="small dim">Lines are numbered, not named. Nothing public links a cellular context to a carrier, a SIM slot or a number, so the app reports how much each line carried rather than guessing a label.</p>
+</section>
+
+<section aria-labelledby="privacy">
+  <h2 id="privacy">Privacy, stated as mechanism</h2>
+  <div class="kv">
+    <dt>Network requests</dt><dd>None. The app contains no networking code of its own &mdash; no updates, no crash reporting, no diagnostics.</dd>
+    <dt>Accounts</dt><dd>None. There is nothing to sign in to.</dd>
+    <dt>Analytics / SDKs</dt><dd>None. No telemetry, no attribution, no advertising.</dd>
+    <dt>Location</dt><dd>Never requested. Roaming is your setting or a device-region estimate.</dd>
+    <dt>Traffic contents</dt><dd>Never read. RoamGuard reads byte <em>counters</em> — how much an interface carried, never what it carried.</dd>
+    <dt>Permissions asked</dt><dd>One: notifications. Decline it and everything except alerts still works.</dd>
+  </div>
+  <p class="small dim" style="margin-top:12px">Full text: <a href="privacy.html">Privacy policy</a>.</p>
+</section>
+
+<section aria-labelledby="spec">
+  <h2 id="spec">Specification</h2>
+  <div class="kv">
+    <dt>Version</dt><dd>1.0</dd>
+    <dt>Requires</dt><dd>iOS 18.0 or later; watchOS 11.0 or later for the Watch app</dd>
+    <dt>Languages</dt><dd>13 — Arabic, Chinese (Simplified), Dutch, English, French, German, Italian, Japanese, Polish, Portuguese (Portugal), Russian, Spanish, Turkish</dd>
+    <dt>Accessibility</dt><dd>VoiceOver, Dynamic Type, Reduce Motion; risk is never signalled by colour alone</dd>
+    <dt>Works offline</dt><dd>Entirely. There is no online mode to lose.</dd>
+    <dt>iCloud sync</dt><dd>Off by default, opt-in. Records are kept per device so an iPhone and an iPad on one account are never added together.</dd>
+  </div>
+</section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <nav>
+    <a href="how-counting-works.html">How counting works</a> <span class="sep">/</span>
+    <a href="alerts.html">Alerts</a> <span class="sep">/</span>
+    <a href="faq.html">FAQ</a> <span class="sep">/</span>
+    <a href="changelog.html">Changelog</a> <span class="sep">/</span>
+    <a href="support.html">Support</a> <span class="sep">/</span>
+    <a href="privacy.html">Privacy</a> <span class="sep">/</span>
+    <a href="terms.html">Terms</a>
+  </nav>
+  <p class="legal">&copy; 2026 Oshi Lab &middot; <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+</div>
+</footer>
+
 </body>
 </html>

@@ -2,80 +2,108 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Terms of Use — RoamGuard</title>
-<meta name="description" content="Terms of Use for the RoamGuard iOS app.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Terms of use — RoamGuard</title>
+<meta name="description" content="RoamGuard terms of use: the licence, the explicit limits of the app's measurement, no warranty, limitation of liability and governing law.">
+<meta name="color-scheme" content="dark light">
 <link rel="icon" href="assets/icon.png">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="panel.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<header class="site">
-  <div class="wrap">
-    <img src="assets/icon.png" alt="">
-    <strong>RoamGuard</strong>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-    </nav>
-  </div>
+<nav class="strip" aria-label="RoamGuard">
+<div class="strip-inner">
+  <a class="id" href="index.html"><span class="led" aria-hidden="true"></span>RoamGuard</a>
+  <a href="index.html">Overview</a>
+  <a href="how-counting-works.html">Counting</a>
+  <a href="alerts.html">Alerts</a>
+  <a href="faq.html">FAQ</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="support.html">Support</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html" aria-current="page">Terms</a>
+  <span class="spacer"></span>
+  <span class="cell meta">Terms</span>
+</div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <h1>Terms of use</h1>
+  <p class="lede">Last updated 17 September 2026. By downloading or using RoamGuard (&ldquo;the app&rdquo;) you agree to these terms.</p>
 </header>
 
-<main class="wrap">
-<article>
+<section aria-labelledby="licence">
+  <h2 id="licence">1. Licence</h2>
+  <p>You are granted a personal, non-exclusive, non-transferable licence to use the app on Apple devices you own or control, as permitted by the App Store Terms of Service.</p>
+</section>
 
-<h1>Terms of Use</h1>
-<p class="updated">Last updated: 6 August 2026</p>
+<section aria-labelledby="limits">
+  <h2 id="limits">2. What the app does, and its limits</h2>
+  <p>RoamGuard estimates mobile data usage by reading the operating system's network interface byte counters.</p>
+  <div class="note hard">
+    <p><b>These estimates are not a bill.</b> Your carrier's own figure is the one that gets charged, and it is the authoritative one.</p>
+  </div>
+  <p>You acknowledge and accept that:</p>
+  <ul>
+    <li>iOS provides no API that reports actual plan usage, so the app's figures are an independent measurement rather than your carrier's accounting.</li>
+    <li>Measurement begins when the app takes its first reading, which may be partway through your billing cycle.</li>
+    <li>iOS provides no API that reports roaming status. Whether traffic is counted as home or roaming comes from your own setting, or from an estimate based on your device's region.</li>
+    <li>Your carrier's accounting may differ: some traffic may be zero-rated, rounded differently, batched, or measured at a different point in the network.</li>
+    <li>Data used by devices connected to your Personal Hotspot is included, because your phone carries it.</li>
+    <li>iOS controls when apps may run in the background, so measurement intervals may be long and the record of which network was active during them may be incomplete.</li>
+    <li>Traffic carried between the app's last reading and a device restart, or between the last reading and a cellular context being torn down, cannot be recovered.</li>
+  </ul>
+  <p><b>The developer is not liable for any charges, overage fees, throttling or disconnection arising from reliance on the app's figures.</b> Always treat your carrier's own figure as authoritative.</p>
+</section>
 
-<p>By downloading or using RoamGuard ("the app") you agree to these terms.</p>
+<section aria-labelledby="warranty">
+  <h2 id="warranty">3. No warranty</h2>
+  <p>The app is provided &ldquo;as is&rdquo;, without warranty of any kind, express or implied, including merchantability, fitness for a particular purpose and non-infringement, to the fullest extent permitted by law.</p>
+</section>
 
-<h2>1. Licence</h2>
-<p>You are granted a personal, non-exclusive, non-transferable licence to use the app on Apple devices you own or control, as permitted by the App Store Terms of Service.</p>
+<section aria-labelledby="liability">
+  <h2 id="liability">4. Limitation of liability</h2>
+  <p>To the maximum extent permitted by law, the developer shall not be liable for any indirect, incidental, special, consequential or punitive damages, or for any loss of data, revenue or profits, arising out of your use of the app.</p>
+</section>
 
-<h2>2. What the app does — and its limits</h2>
-<p>RoamGuard estimates mobile data usage by reading the operating system's network interface byte counters. <strong>These estimates are not a bill.</strong></p>
-<p>You acknowledge and accept that:</p>
-<ul>
-  <li>iOS provides no API that reports actual plan usage, so the app's figures are an independent measurement, not your carrier's.</li>
-  <li>Measurement begins when the app is installed, which may be partway through your billing cycle.</li>
-  <li>iOS provides no API that reports roaming status. Whether traffic is counted as domestic or roaming comes from your own setting or an estimate.</li>
-  <li>Your carrier's accounting may differ: some traffic may be zero-rated, rounded differently, or measured at a different point in the network.</li>
-  <li>Data used by devices connected to your Personal Hotspot is included.</li>
-  <li>iOS controls when apps may run in the background, so measurement may pause.</li>
-</ul>
-<p><strong>The developer is not liable for any charges, overage fees, throttling or disconnection arising from reliance on the app's figures.</strong> Always treat your carrier's own figure as authoritative.</p>
+<section aria-labelledby="privacy">
+  <h2 id="privacy">5. Privacy</h2>
+  <p>The app collects no personal data, has no account and makes no network requests of its own. See the <a href="privacy.html">privacy policy</a> for the detail.</p>
+</section>
 
-<h2>3. No warranty</h2>
-<p>The app is provided "as is", without warranty of any kind, express or implied, including merchantability, fitness for a particular purpose and non-infringement, to the fullest extent permitted by law.</p>
+<section aria-labelledby="changes">
+  <h2 id="changes">6. Changes</h2>
+  <p>These terms may be updated with new releases. Continued use after an update constitutes acceptance of the revised terms.</p>
+</section>
 
-<h2>4. Limitation of liability</h2>
-<p>To the maximum extent permitted by law, the developer shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of data, revenue or profits, arising out of your use of the app.</p>
+<section aria-labelledby="law">
+  <h2 id="law">7. Governing law</h2>
+  <p>These terms are governed by the laws of the jurisdiction in which the developer is established, without regard to conflict-of-law provisions.</p>
+</section>
 
-<h2>5. Privacy</h2>
-<p>The app collects no personal data. See the <a href="privacy.html">Privacy Policy</a>.</p>
+<section aria-labelledby="contact">
+  <h2 id="contact">Contact</h2>
+  <p><a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+</section>
 
-<h2>6. Changes</h2>
-<p>These terms may be updated with new releases. Continued use after an update constitutes acceptance of the revised terms.</p>
-
-<h2>7. Governing law</h2>
-<p>These terms are governed by the laws of France, without regard to conflict-of-law provisions.</p>
-
-<h2>Contact</h2>
-<p><a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
-
-</article>
 </main>
 
-<footer class="site">
-  <div class="wrap">
-    <p>©  2026 Oshi Lab ·
-      <a href="index.html">Home</a> ·
-      <a href="privacy.html">Privacy</a> ·
-      <a href="support.html">Support</a>
-    </p>
-  </div>
+<footer>
+<div class="wrap">
+  <nav>
+    <a href="index.html">Overview</a> <span class="sep">/</span>
+    <a href="how-counting-works.html">How counting works</a> <span class="sep">/</span>
+    <a href="alerts.html">Alerts</a> <span class="sep">/</span>
+    <a href="faq.html">FAQ</a> <span class="sep">/</span>
+    <a href="changelog.html">Changelog</a> <span class="sep">/</span>
+    <a href="support.html">Support</a> <span class="sep">/</span>
+    <a href="privacy.html">Privacy</a>
+  </nav>
+  <p class="legal">&copy; 2026 Oshi Lab &middot; <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+</div>
 </footer>
 
 </body>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Changelog — RoamGuard</title>
+<meta name="description" content="RoamGuard version history. Version 1.0 is the only version. What it ships with, and the pre-release build history behind it.">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="strip" aria-label="RoamGuard">
+<div class="strip-inner">
+  <a class="id" href="index.html"><span class="led" aria-hidden="true"></span>RoamGuard</a>
+  <a href="index.html">Overview</a>
+  <a href="how-counting-works.html">Counting</a>
+  <a href="alerts.html">Alerts</a>
+  <a href="faq.html">FAQ</a>
+  <a href="changelog.html" aria-current="page">Changelog</a>
+  <a href="support.html">Support</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+  <span class="spacer"></span>
+  <span class="cell meta">1.0 · build 7</span>
+</div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <h1>Changelog</h1>
+  <p class="lede">There is one version of RoamGuard: <b>1.0</b>. Nothing has shipped after it, so nothing after it is listed here. When there is a 1.1, it will appear below this line with what actually changed.</p>
+</header>
+
+<section aria-labelledby="v10">
+  <h2 id="v10">Release</h2>
+
+  <div class="rel">
+    <div class="rel-head">
+      <span class="rel-ver">1.0</span>
+      <span class="rel-tag">Current</span>
+      <span class="rel-date">Build 7 &middot; iOS 18.0+, watchOS 11.0+</span>
+    </div>
+
+    <p>The first release. Everything below is in it.</p>
+
+    <h3>Measurement</h3>
+    <ul>
+      <li>Mobile data measured from the kernel's per-interface byte counters, with 32-bit counter wraps recovered exactly by modular subtraction.</li>
+      <li>Reboots detected from system boot time, not inferred from the numbers.</li>
+      <li>Rebuilt cellular contexts detected by kernel interface index, so one line re-anchoring never disturbs another.</li>
+      <li>Multi-SIM: every cellular context resolved separately and summed afterwards, with per-line attribution on the dashboard and a flag on any line whose context restarted mid-cycle.</li>
+      <li>Per-line pool assignment, so a home line and a local eSIM can be charged to different pools.</li>
+      <li>Wi-Fi measured and reported separately, never charged against the plan.</li>
+      <li>Time spent on each network, sampled while the app is running or granted a background refresh.</li>
+    </ul>
+
+    <h3>Forecast</h3>
+    <ul>
+      <li>Separate home and roaming pools, each with its own allowance, projection and risk level.</li>
+      <li>Projected end-of-cycle total from a linear run rate, plus a probability of exceeding derived from the spread of your own daily usage.</li>
+      <li>Safe daily pace, daily average, days elapsed and days remaining.</li>
+      <li>Billing cycles that clamp correctly in short months, across leap years and daylight-saving changes.</li>
+      <li>Risk shown as On track / Watch out / At risk — never by colour alone.</li>
+    </ul>
+
+    <h3>Alerts</h3>
+    <ul>
+      <li>Cycle thresholds at 50, 70, 80, 90, 95, 98 and 100%, each switchable; 50, 80, 90, 95 and 100 on by default.</li>
+      <li>Forecast alert when the projection lands past the allowance while you are still inside it.</li>
+      <li>Heavy-day alert at 1.8&times; your recent daily average.</li>
+      <li>Optional daily budget with alerts at 50, 75 and 100% of it.</li>
+      <li>Optional daily summary at an hour you choose.</li>
+      <li>Only the 100% alert is Time Sensitive, and only when you leave that switch on.</li>
+      <li>Optional pause on Wi-Fi, which still lets the limit alert through.</li>
+      <li>Separate sound choices for routine alerts and for reaching the limit, with a working preview.</li>
+      <li>Every alert de-duplicated per cycle, or per day for the daily ones.</li>
+    </ul>
+
+    <h3>Surfaces</h3>
+    <ul>
+      <li>Home Screen widgets (small and medium) and Lock Screen widgets (circular, rectangular, inline), which take their own reading rather than re-displaying what the app last wrote.</li>
+      <li>A Live Activity scoped to a roaming trip, clearing two minutes after the trip ends.</li>
+      <li>Apple Watch app and complications, mirroring the iPhone read-only.</li>
+      <li>Siri and Shortcuts actions: remaining mobile data, remaining roaming data, data used today, days left in the cycle, refresh usage, switch roaming on or off.</li>
+      <li>CSV and PDF export of daily history.</li>
+    </ul>
+
+    <h3>Honesty, privacy and platform</h3>
+    <ul>
+      <li>A &ldquo;How it works&rdquo; screen stating what iOS does and does not expose, and a card on the dashboard saying the same thing where the numbers are.</li>
+      <li>Calibration against your carrier's figure, applied to today's record so earlier days keep what was measured.</li>
+      <li>No account, no analytics, no third-party SDK, no location access, and no network requests of the app's own.</li>
+      <li>Optional iCloud sync, off by default, with per-device records so two devices are never summed.</li>
+      <li>13 languages: Arabic, Chinese (Simplified), Dutch, English, French, German, Italian, Japanese, Polish, Portuguese (Portugal), Russian, Spanish, Turkish.</li>
+      <li>VoiceOver, Dynamic Type and Reduce Motion support; light, dark and automatic appearance.</li>
+    </ul>
+  </div>
+</section>
+
+<section aria-labelledby="builds">
+  <h2 id="builds">Pre-release builds of 1.0</h2>
+  <p class="small dim">These are builds of the same 1.0, not separate releases. They are listed because the fixes in them are the kind a user would otherwise have to discover. Dates are the dates the work landed.</p>
+  <div class="tw">
+  <table>
+    <thead><tr><th>Date</th><th>Build</th><th>What changed</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>2026-08-24</td>
+        <td>7</td>
+        <td>Wi-Fi usage surfaced in the app, which was already being measured but never shown. Alert thresholds became editable in Settings — previously they could only be chosen once during setup, while setup itself promised they could be changed later.</td>
+      </tr>
+      <tr>
+        <td>2026-08-21</td>
+        <td>6</td>
+        <td><b>Play a preview could not work on any device.</b> iOS suppresses an app's own notifications while that app is frontmost unless it explicitly asks for them, and the button also had three separate ways to do nothing without saying so. Both halves fixed: the app now presents its own alerts in the foreground, and the button reports what it did. The Live Activity trip buttons could fail the same silent way, and were fixed with it.</td>
+      </tr>
+      <tr>
+        <td>2026-08-18</td>
+        <td>&mdash;</td>
+        <td><b>The widget only ever re-rendered what the app had written.</b> On a phone whose owner had not opened RoamGuard for two days, the widget showed a remaining allowance that ignored two days of traffic and a day count that had already run out, with no hint it was stale. The widget now takes its own counter reading and projects forward, and writes nothing back.</td>
+      </tr>
+      <tr>
+        <td>2026-08-11</td>
+        <td>1</td>
+        <td>First build: multi-SIM measurement and per-line attribution.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small dim">Builds 2 to 5 were routine submission builds with no user-visible change recorded, so nothing is claimed for them.</p>
+</section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <nav>
+    <a href="index.html">Overview</a> <span class="sep">/</span>
+    <a href="how-counting-works.html">How counting works</a> <span class="sep">/</span>
+    <a href="alerts.html">Alerts</a> <span class="sep">/</span>
+    <a href="faq.html">FAQ</a> <span class="sep">/</span>
+    <a href="support.html">Support</a> <span class="sep">/</span>
+    <a href="privacy.html">Privacy</a> <span class="sep">/</span>
+    <a href="terms.html">Terms</a>
+  </nav>
+  <p class="legal">&copy; 2026 Oshi Lab &middot; <a href="mailto:contact@oshi-messenger.com">contact@oshi-messenger.com</a></p>
+</div>
+</footer>
+
+</body>
+</html>
